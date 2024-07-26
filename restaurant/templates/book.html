@@ -18,6 +18,8 @@
             </p>
             <p>
             <!-- Step 9: Part one -->
+            <label for="reservation_date">Date:</label>
+              <input type="date" placeholder="date" required="" id="reservation_date">
             </p>
       
             <p>
@@ -49,13 +51,19 @@
 <script>
 
   const date = new Date()
-  document.getElementById('reservation_date').value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate().toString().padStart(2, "0")}`
+  document.getElementById('reservation_date').value = '${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate().toString().padStart(2, "0")}'
 
   console.log(document.getElementById('reservation_date').value)
   getBookings()
 
 
   /*  Step 10: Part two */
+  document.getElementById('reservation_date').addEventListener('change', function(){
+      getBookings();
+  });
+
+  
+  
 
 
   function getBookings() {
@@ -67,14 +75,27 @@
       .then(r => r.json())
       .then(data => {
         reserved_slots = []
-        bookings = ''
+        let bookings = <p>${item.fields.first_name} - ${formatTime(item.fields.reservation_slot)}</p>;
         
         /* Step 11: Part three */
 
+          for(let item in data){
+              console.log(item.fields);
+              reserved_slots.push(item.fields.reservation_slot);
+          }
 
         /* Step 12: Part four  */
+        let slot_options = '<option value="0" disabled>Select time</option>';
 
-        
+        for(let i=0; 10<i<20; i++){
+            const label = formatTime(i);
+            if (reserved_slots.includes(i)){
+                slot_options += '<option value=${i} disabled>${label}</option>';
+            } else{
+                 slot_options += '<option value=${i}>${label}</option>';
+            }
+          }
+
         document.getElementById('reservation_slot').innerHTML = slot_options
         if(bookings==''){
           bookings = "No bookings"
@@ -86,7 +107,7 @@
   function formatTime(time) {
     const ampm = time < 12 ? 'AM' : 'PM'
     const t = time < 12 ? time : time > 12 ? time - 12 : time
-    const label = `${t} ${ampm}`
+    const label = '${t} ${ampm}'
     return label
   }
 

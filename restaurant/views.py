@@ -19,7 +19,7 @@ def about(request):
 
 def reservations(request):
     date = request.GET.get('date',datetime.today().date())
-    bookings = Booking.objects.all()
+    bookings = Booking.objects.all().filter(reservation_date=date)
     booking_json = serializers.serialize('json', bookings)
     return render(request, 'bookings.html',{"bookings":booking_json})
 
